@@ -1,48 +1,38 @@
 [//]: # (Image References)
 [image_0]: ./misc/rover_image.jpg
-# Search and Sample Return Project
-![alt text][image_0] 
+# Search and Sample Return Project By AGKhalil
+This is a writeup addressing each point of the project and how they were tackled.
 
-This project is modeled after the [NASA sample return challenge](https://www.nasa.gov/directorates/spacetech/centennial_challenges/sample_return_robot/index.html) and it will give you first hand experience with the three essential elements of robotics, which are perception, decision making and actuation.  You will carry out this project in a simulator environment built with the Unity game engine.  
+#### 1. Run the functions provided in the notebook on test images (first with the test data provided, next on data you have recorded). Add/modify functions to allow for color selection of obstacles and rock samples.
+The notebook has been an essential pilar for understanding the project in all its aspects. This project deals with how a robot can opencv to analyse an image of its surroundings and behave accordingly. The rover first needs to breakdown the image and identify the navigable terrain, the obstacles, and the target stones. Afterwards, the rover transfors that image into a birdview perspective, which, as the robot keeps moving and obtaining imagry, maps the world surrounding it. Then the robot can decide how to behave based on that information. What the notebook does is that it provides a walkthrough through each aspect necessary to accomplish the mapping process.
 
-## The Simulator
-The first step is to download the simulator build that's appropriate for your operating system.  Here are the links for [Linux](https://s3-us-west-1.amazonaws.com/udacity-robotics/Rover+Unity+Sims/Linux_Roversim.zip), [Mac](	https://s3-us-west-1.amazonaws.com/udacity-robotics/Rover+Unity+Sims/Mac_Roversim.zip), or [Windows](https://s3-us-west-1.amazonaws.com/udacity-robotics/Rover+Unity+Sims/Windows_Roversim.zip).  
+The first function that had to be modified in the notebook is "Perspective Transform". This function transforms the image viewed by the rover into a birds view image. The before and after images below describe what the function does. A grid is applied to the initial image to help planning the transformation process. Each square is one meter squared. *source* and *destination* are the four corner points corresponding to one meter squared on the inital and final images. The function takes in the source points and transforms them to a birds view.
 
-You can test out the simulator by opening it up and choosing "Training Mode".  Use the mouse or keyboard to navigate around the environment and see how it looks.
+![Source image](https://github.com/AGKhalil/RoboND-Rover-Project/blob/master/Writeup_images/Screen_Shot_2017-06-02_at_11.10.54_PM.png)
 
-## Dependencies
-You'll need Python 3 and Jupyter Notebooks installed to do this project.  The best way to get setup with these if you are not already is to use Anaconda following along with the [RoboND-Python-Starterkit](https://github.com/ryan-keenan/RoboND-Python-Starterkit). 
-
-
-Here is a great link for learning more about [Anaconda and Jupyter Notebooks](https://classroom.udacity.com/courses/ud1111)
-
-## Recording Data
-I've saved some test data for you in the folder called `test_dataset`.  In that folder you'll find a csv file with the output data for steering, throttle position etc. and the pathnames to the images recorded in each run.  I've also saved a few images in the folder called `calibration_images` to do some of the initial calibration steps with.  
-
-The first step of this project is to record data on your own.  To do this, you should first create a new folder to store the image data in.  Then launch the simulator and choose "Training Mode" then hit "r".  Navigate to the directory you want to store data in, select it, and then drive around collecting data.  Hit "r" again to stop data collection.
-
-## Data Analysis
-Included in the IPython notebook called `Rover_Project_Test_Notebook.ipynb` are the functions from the lesson for performing the various steps of this project.  The notebook should function as is without need for modification at this point.  To see what's in the notebook and execute the code there, start the jupyter notebook server at the command line like this:
-
-```sh
-jupyter notebook
-```
-
-This command will bring up a browser window in the current directory where you can navigate to wherever `Rover_Project_Test_Notebook.ipynb` is and select it.  Run the cells in the notebook from top to bottom to see the various data analysis steps.  
-
-The last two cells in the notebook are for running the analysis on a folder of test images to create a map of the simulator environment and write the output to a video.  These cells should run as-is and save a video called `test_mapping.mp4` to the `output` folder.  This should give you an idea of how to go about modifying the `process_image()` function to perform mapping on your data.  
-
-## Navigating Autonomously
-The file called `drive_rover.py` is what you will use to navigate the environment in autonomous mode.  This script calls functions from within `perception.py` and `decision.py`.  The functions defined in the IPython notebook are all included in`perception.py` and it's your job to fill in the function called `perception_step()` with the appropriate processing steps and update the rover map. `decision.py` includes another function called `decision_step()`, which includes an example of a conditional statement you could use to navigate autonomously.  Here you should implement other conditionals to make driving decisions based on the rover's state and the results of the `perception_step()` analysis.
-
-`drive_rover.py` should work as is if you have all the required Python packages installed. Call it at the command line like this: 
-
-```sh
-python drive_rover.py
-```  
-
-Then launch the simulator and choose "Autonomous Mode".  The rover should drive itself now!  It doesn't drive that well yet, but it's your job to make it better!  
-
-**Note: running the simulator with different choices of resolution and graphics quality may produce different results!  Make a note of your simulator settings in your writeup when you submit the project.**
+![Destination Image](https://github.com/AGKhalil/RoboND-Rover-Project/blob/master/Writeup_images/Screen%20Shot%202017-06-02%20at%2011.10.59%20PM.png)
 
 
+The second block of code modified is regarding color threshing. There are four different objects that can be in any image processed by the rover, road, obstacles, sky, or yellow rocks. Each object has different color composition; therefore, the rover can easily breakdown the image based on color thresholds and identify where the road is and where the yellow rocks are. There are three functions in charge of achieveing this. *terrain_thresh* identifies navigable terrain, *obstacle_terrain* identifies obstacles, which could be big rocks, sky, or mountains, and *stone_thresh* which identifies the yellow rocks. Each function outputs a binary image. Ones are given to where the threshold holds true and zeros where otherwise. The first image below is what the rover sees, the second is the birds view of that, and the rest are the outputs of the color threshold functions. Each showing either the navigable terrain, the obstacles, or the yellow rocks.
+
+![Original image](https://github.com/AGKhalil/RoboND-Rover-Project/blob/master/Writeup_images/Screen%20Shot%202017-06-02%20at%2011.22.17%20PM.png)
+
+![Warped image](https://github.com/AGKhalil/RoboND-Rover-Project/blob/master/Writeup_images/Screen%20Shot%202017-06-02%20at%2011.22.20%20PM.png)
+
+![Color Threshold Images](https://github.com/AGKhalil/RoboND-Rover-Project/blob/master/Writeup_images/Screen%20Shot%202017-06-02%20at%2011.21.56%20PM.png)
+
+After the thresholds are applied the images are mapped from the relative axes of the rover onto the universal axes of the map. This is achieved through *rover_coords*, *rotate_pix*, *translate_pix* and *pix_to_world*. *rover_coords* takes in the output of the threshold functions and maps the binary images onto the relative axes of the rover. *rotate_pix* rotates the relative map to match the universal axes based on the rovers yaw angle. *translate_pix* moves the points to the origins of the universal map which is where the rover currently is. *pix_to_world* combines all these functions together and applies them. An additional function is identified here, *to_polar_coords*, which transforms the rovers map coordinates into polar coordinates. This allows for easy identification of how far things are relative to the rover as well as their bearings. The images below provide a good demonstration of what these functions do. The arrow in image four is created by taking the mean of all the binary true pixels in the image.
+
+![Coordinate transformations](https://github.com/AGKhalil/RoboND-Rover-Project/blob/master/Writeup_images/Screen%20Shot%202017-06-02%20at%2011.31.38%20PM.png)
+
+#### Populate the *process_image()* function with the appropriate analysis steps to map pixels identifying navigable terrain, obstacles and rock samples into a worldmap. Run *process_image()* on your test data using the moviepy functions provided to create video output of your result.
+This function combines all of the functions mentioned above to be compiled in a video using the moviepy functions. First, the surce and destination pointds for *perspect_transfrom* are identified. Second, the input image is transformed to birds view using *perspect_transfrom*. Third, the image is processed three times by *terrain_thresh, obstacle_thresh, *and* stone_thresh* to provide binary images for each. Fourth, each binary image is converted to rover-centric coordinates using *rover_coords*. Fifth, *pix_to_world* converts all rover-centric coordinates to world coordinates. Sixth, the worldmap in the rover's *data* is updated. Seventh, the output images are outputed to the screen. This entire process is repeated over and over agin for all the images recorded while the simulation was on. These images are then compiled together into a video as shown below.
+
+#### Fill in the *perception_step()* (at the bottom of the *perception.py* script) and *decision_step()* (in *decision.py*) functions in the autonomous mapping scripts and an explanation is provided in the writeup of how and why these functions were modified as they were.
+*perception_step()* is incredibly similar to *process_image()*. There is a slight difference of course; *perception_step()* updates the rover's binary view as well as the truth map. *perception_step()* also has a bit of logic related to the fidelity of the robot. The rover's fidelity is defined as how accurate the mapping images are. The main issue here is that the rover moves in all three dimensions, while ideally we want it to move only in one, yaw. This movement in roll and pitch are the main reason for the inaccuracy. Therefore, *perception_step()* has a conditional statement prior to updating the truthmap, if the roll and pitch are not within half of a degree from zero, don't update. This helped in maintaining the fidelity in the high 80s.
+
+*decision_step()* hasn't been modified at all. To get this project to work all that needed to be modified are *perception_step()* and *drive_rover.py*. *drive_rover.py* was modified to reduce the rover's speed and brake, which decrease any sudden changes in roll and pitch. Furthermore, the thresholds for stopping and moving forward have been modified. Both were increased to prevent the rover from getting too close to rocks or tight spots where it would get stuck. This would have been a problem if the project was taken a step further to pick up the stones since they are all close to the walls.
+
+Below is a screenshot of a successful run!
+
+![Success](https://github.com/AGKhalil/RoboND-Rover-Project/blob/master/Writeup_images/Screen%20Shot%202017-06-03%20at%2012.52.00%20AM.png)
